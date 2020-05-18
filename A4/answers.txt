@@ -1,0 +1,13 @@
+1) The running time of the Reddit ETL code using cache is lesser compared to the running time of the Reddit ETL code without using cache. I got the following running time for the reddit-2 dataset with and without using cache.
+
+with cache- 12.387 seconds
+without cache- 16.658 seconds
+
+2) .cache() would make the code slower when used in a place where it is not necessary. Cache should be used after spark transformations like sortByKey,reduceByKey,etc. In the below example,if reading the input file is cached instead of caching after filtering the data, the code runs slower with cache. This is because when an input file is cached, the number of steps are not reduced each time the code is run. If the file is cached after filtering the data, the filtering steps and the previous steps need not be done again.
+In case of reddit_etl code,using the cache like this would slower the code than without using cache.
+json_data = text.map(json.loads).cache()
+filter=json_data.map(get_values).filter(filter_data)
+
+3) Broadcast join will be faster than the actual join when the size of the data broadcasted is small(say 5 MB) when the actual size of the data to which it has to be joined is large(5 GB). This is because broadcast join improves the performance by avoiding replication of data.
+
+4) Broadcast join will be slower when the size of the data to be bradcasted is large. In this case, a lot of data has to distributed among the executors which will consume a lot of time.

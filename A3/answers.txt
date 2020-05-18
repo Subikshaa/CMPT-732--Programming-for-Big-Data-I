@@ -1,0 +1,68 @@
+1) The original wordcount-5 data set was very large. Without repartition,the data in the partitions will not be of similar size.So one partition may have lots of data while the other can have lesser amount of data.In this case,the executor of the larger size partition will run for a longer time than the executor for the smaller partition which is under utilized.By repartitioning,data is split among the partitions almost equally.Therefore executors of every partition will be running parallely thereby running faster than the case without repartitioning. 
+
+2)Yes,the same fix does not make this code run faster on wordcount-3 data set. It is slightly slower because without repartitioning the code runs normally (i.e.)similar to running time of the code using wordcount-5.During repartitioning,shuffling happens and it takes some time. This additional shuffling time which occurs during repartitioning makes the code run slightly slower on the wordcount-3 data set.
+
+3)If the data in the partitions are not of similar size,executor will not be utilized much in case of the partition with lesser data.For the partition with larger data, the running time will be higher than the partition with lesser data. If the partitions are equally split containing data of similar size,we can get another minute of running time because executors of each partition will be running parallely and faster.We can get the input file,repartition it and save the repartitioned file as text file so those files can be used as input files later on.
+   eg. text = sc.textFile(file_name).repartition(8)
+       text.saveAsTextFile("wordcount-5-partitioned")
+
+4)When experimenting with the number of partitions while estimating Euler's constant,I didn't see much difference for the range 2-30 (1m 8s) when I gave 100000000 as the number of samples. Partitions of range 2-30 were good.
+
+5)Yes,Spark does add some overhead to a job.In my system I got the following running time:
+
+CPython- 4m 11.96s
+Spark Python + PyPy- 21.92s
+Non-Spark single-threaded PyPy- 43s
+Non-Spark single-threaded C- 27.158s 
+
+PyPy runs faster than the usual Python implementation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

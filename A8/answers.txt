@@ -1,0 +1,24 @@
+1) *(3) BroadcastHashJoin [partkey#25], [partkey#0], Inner, BuildRight
+*(3) BroadcastHashJoin [orderkey#50], [orderkey#19], Inner, BuildLeft
+ BroadcastHashJoin is performed for join in spark in this execution plan. In the above execution plan for the "join in Spark", we can see that the whole dataframe was not used for the join operation because there are pushed filters. Selected columns which are useful for the program were only used (i.e. only selective columns of a dataframe were filtered and used rather than using the whole dataframe). This makes the execution faster and the memory usage so small.
+
+2) CREATE TABLE orders_parts (
+    orderkey int,
+    clerk text,
+    comment text,
+    custkey int,
+    order_priority text,
+    orderdate date,
+    orderstatus text,
+    part_names set<text>,
+    ship_priority int,
+    totalprice decimal,
+    PRIMARY KEY (orderkey)
+);
+
+3) I got the following running times for the two programs using tpch2 data on the cluster:
+  - tpch_orders_df.py - 55s
+  - tpch_orders_denorm.py - 26s
+The running time of tpch_orders.denom.py is less because we are just performing dataframe operations on a single table orders_parts. On the other hand, the running time of tpch_orders_df.py is more because we are loading dataframes from three tables, joining them and performing mentioned opertaions using dataframe functions.
+
+4) Assuming that the orders table had the part_names column in the main data set, every insert,update and delete operation performed on the new table should be performed on the parts table as well. The actual orders table does not contain part_names. So we join orders, lineitem and part table inorder to perform insert, update or delete operations. If we perform insert operation on the orders table that contaisn part_names, we have to insert in the part table also since it contains the names of the part as well. Same is the case for update and delete operations.

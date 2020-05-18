@@ -1,0 +1,50 @@
+1)*Solution 1: Like the LongPairWritable class written in the assignment 1(RedditAverage),we can write a class which will help us use a long and text pair.Using this class,mapper can output the count(long) and title(text) pair along with the timestamp as the key and the (long,text) pair as the value.This pair can be reduced in the reducer part thereby giving the output as timestamp as the key as (long,text) as the value where long type consists of the max count of the requested popular page and text type gives the title of that page.
+
+*Solution 2:-Number of views and title can be passed as string(value) separated by a ",".So in this case count has to be passed as a string in the mapper function.
+-Say, a.set(val[0]);
+      String toSend = val[3]+","+val[2]; 
+      b.set(toSend);
+      context.write(a,b);
+    
+-In the reducer part,the string can be split based on "," and the max count can be found.
+Example:String sep=values.toString().split(",");
+The reducer output can be again converted to the above format where the values are separated by "," thereby returning timestamp as the key and count,title as the value.
+
+
+
+2)*In map,map function is applied to elements in each partition of RDD and stores the value returned in a new RDD.It returns only a single value per function.
+*FlatMap is similar to Map.In case of flatMap, function is applied to elements in each partition of RDD and every outuput element in a partition of RDD is flattened.Therefore,a flatmap returns 0 or more values for an input.
+*.flatMap is more like the MapReduce concept of mapping.
+
+*Example:
+Hi ABC
+Have a nice day
+
+Suppose file_name.txt contains the above content.Applying map and flatMap to the above function will return as
+
+Map:[['Hi','ABC'],['Have','a','nice','day']]
+FlatMap:['Hi','ABC','Have','a','nice','day']
+
+
+3)*In reduce,all the values in the RDD are considered and values are reduced.That is,the whole file is reduced at once based on some function.
+*In reduceByKey,key value pairs are distributed.The values are reduced parallely based on the keys.Finally,the resultant values are reduced.
+*.reduceByKey is more like the MapReduce concept of reducing.
+
+4)*In my improved python implementation,the second line's title was returned as output since two lines had same count value with different title.
+That is, 
+20160801-120000 en Popular_Page 10 2000
+20160801-120000 en Popular_Page_1 10 2000
+then,20160801-120000	(10,'Popular_Page_1')  was the output.
+*We can define a function to find the page with maximum views as follows:
+	#retVal and val are tuples - (numberOfViews, pageName)
+	def maxFind(retVal,val):
+		if(retVal[0] > val[0]):
+			return retVal
+		elif(retVal[0] == val[0]):
+			return (retVal[0],(retVal[1],val[1]))
+		else:
+			return val
+	rdd.reduceByKey(maxFind)
+-Doing so will create an RDD with value as (timestamp,(numberOfViews,(all pagenames with max numberOfViews)))
+- this can be sent as output to text file as:
+	return "%s\t(%i,%s)" % (timestamp,numberofviews,tuple containing all pagenames)

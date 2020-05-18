@@ -1,0 +1,24 @@
+1) In the Reddit averages execution plan, score and subreddit fields were loaded.
+   *(1) FileScan json [score#16L,subreddit#18] 
+Yes,there was a combiner-like step done. Partial average is the combiner like step done here. It gives sum of scores and count for every partition. Later total average is found using results from partial average.
+
+
+2) *MapReduce - 1m 53s
+*Spark DataFrames (with CPython) - 1m 5s
+*Spark RDDs (with CPython) - 2m 37s
+*Spark DataFrames (with PyPy) - 1m 3s
+*Spark RDDs (with PyPy) - 1m 44s
+Dataframes do not use python for execution but RDDs use python. Data frames are highly advanced and hence are not affected by PyPy execution whereas RDD execution is optimized by the usage of PyPy's just in time complier. This is why the difference was large for RDDs but not for DataFrames.
+
+3) When Wikipedia popular code was run with Pagecounts-3 dataset on the cluster,I got the following running time.
+	with broadcast - 1m 17s
+        without broadcast - 1m 51s
+Broadcast hint made a difference of 34 seconds. 
+
+4) - Wikipedia popular execution plan with broadcast uses BroadcastHashJoin.
+	*(3) BroadcastHashJoin [views#2L, Hour#8]
+-Wikipedia popular execution plan without broadcast uses SortMergeJoin.
+	*(6) SortMergeJoin [views#2L, Hour#8]
+
+
+5) I prefer "temp tables + SQL syntax" style form for solving the problem. "temp tables + SQL syntax" produces more readable code.

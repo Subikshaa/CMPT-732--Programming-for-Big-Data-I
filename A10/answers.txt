@@ -1,0 +1,13 @@
+1) When one of the nodes in which the HDFS files were stored failed, the files were replicated to another node.
+For example, when we were working on Raspberry Pi, the HDFS files were stored in nodes 1,3 and 5 since the replication factor is 3. When node 5 failed, the files were replicated to node 6 in order to maintain the repication factor.
+
+2)
+18/11/08 15:04:30 ERROR cluster.YarnScheduler: Lost executor 5 on hadoop3: Container marked as failed: container_1541687081069_0003_01_000006 on host: hadoop3. Exit status: -100. Diagnostics: Container released on a *lost* node
+18/11/08 15:04:30 WARN scheduler.TaskSetManager: Lost task 91.0 in stage 0.0 (TID 91, hadoop3, executor 5): ExecutorLostFailure (executor 5 exited caused by one of the running tasks) Reason: Container marked as failed: container_1541687081069_0003_01_000006 on host: hadoop3. Exit status: -100. Diagnostics: Container released on a *lost* node
+18/11/08 15:04:30 WARN scheduler.TaskSetManager: Lost task 94.0 in stage 0.0 (TID 94, hadoop3, executor 5): ExecutorLostFailure (executor 5 exited caused by one of the running tasks) Reason: Container marked as failed: container_1541687081069_0003_01_000006 on host: hadoop3. Exit status: -100. Diagnostics: Container released on a *lost* node
+18/11/08 15:04:30 WARN scheduler.TaskSetManager: Lost task 90.0 in stage 0.0 (TID 90, hadoop3, executor 5): ExecutorLostFailure (executor 5 exited caused by one of the running tasks) Reason: Container marked as failed: container_1541687081069_0003_01_000006 on host: hadoop3. Exit status: -100. Diagnostics: Container released on a *lost* node
+18/11/08 15:04:30 WARN scheduler.TaskSetManager: Lost task 81.0 in stage 0.0 (TID 81, hadoop3, executor 5): ExecutorLostFailure (executor 5 exited caused by one of the running tasks) Reason: Container marked as failed: container_1541687081069_0003_01_000006 on host: hadoop3. Exit status: -100. Diagnostics: Container released on a *lost* node
+
+When one of the compute nodes(node 3 in my case) disappeared, the node becomes dead and the tasks in that node fail. So, these tasks (TID 91,94,90,81) will be performed in some other node. Therefore, this whole process of another node handling these failed tasks is automatically taken care by YARN.
+
+3) Yes, I would like to see how the YARN works with cache and check points in this cluster. 

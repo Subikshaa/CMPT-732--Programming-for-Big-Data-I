@@ -1,0 +1,10 @@
+1. No,the original WordCount does not confuse me.Before starting the assignment,I was not sure about how the StringTokenizer worked.Then I used online sources to learn about it and understood the code clearly.
+
+
+2. When -D mapreduce.job.reduces=3 was given,the output was same as the default(reduce=1) one but the text was not sorted since mapper output was distributed to 3 reducers.3 output files were created after running the jar file. Since there are 3 reducers,the mapper output is given to three reducers thereby decreasing the execution time. This is why it would be necessary even if the job produces large output sets.
+
+
+3. Since reduces=0 is given,only the mapper works. Every key in the dataset had the value '1' and displayed in the output.If reduces=1, the same words/keys from mapper output can be summed up in the reducer part of mapreduce.
+
+
+4. Yes,there is a noticeable difference in the running time of my RedditAverage with and without the combiner optimization. The execution time of the program is lesser with the combiner optimization since for every input block the values of each key are combined and then in the reducer part of MapReduce, the values of each key from all the blocks are added.This reduces the computational work of the reducer.

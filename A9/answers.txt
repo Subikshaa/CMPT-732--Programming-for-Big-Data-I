@@ -1,0 +1,53 @@
+1) I got the following slope and intercept:
+          slope: -51.29894906435982
+          intercept: 45.797608077593395
+So, my best guess for the slope is around -51 and intercept is around 45.
+
+2) Yes, the streaming program's estimate of the slope and intercept gets better as the program runs since the program aggregate all of the date from the start of time.
+
+3) In the colour classification question, I got the following validation scores:
+          Validation score for RGB model: 0.590583
+          Validation score for LAB model: 0.6827021494370522
+
+4) (without yesterday's temperature)
+tmax-1
+   validation:
+      r2 = 0.879506
+      rmse = 4.3059
+   test:
+      r2 = 0.36917329720471104
+      rmse = 10.302135213015573
+
+tmax-2
+  validation:
+      r2 = 0.787395
+      rmse = 5.95976
+  test:
+      r2 = 0.7763759333386949
+      rmse = 6.133826419157705
+When tmax-1 dataset is used, we can observe that the rmse error is less for validation set and more for testing. This shows that the training data is over-fitted. But, this is not the case with tmax-2 datset.
+
+5) tmax-1:
+  without yesterday's temperature:
+    r2 = 0.36917329720471104
+    rmse = 10.302135213015573
+  with yesterday's temperature:
+    r2 = 0.8340361366545483
+    rmse = 5.266949164055383
+
+tmax-2:
+  without yesterday's temperature:
+    r2 = 0.7763759333386949
+    rmse = 6.133826419157705
+  with yesterday's temperature:
+    r2 = 0.9095196043271975
+    rmse = 3.888925327767776
+
+6) tmax1:
+  without yesterday's temperature:
+    (4,[0,1,2,3],[0.2528178022870996,0.1517438056515544,0.11280528391275754,0.4826331081485886])
+  with yesterday's temperature:
+    (5,[0,1,2,3,4],[0.12624346249715618,0.08739591244837326,0.08967176092940507,0.2874115060906721,0.4092773580343934])
+
+Yes, the model is making decisions reasonably. This is because it gives high feature importance to yesterday's temperature when it is included. If yesterday's temperature is not included, feature importance is more for dayofyear.
+Given yesterday's temperature as 12, today's temerperature was predicted as 12.22. So, with yesterday's temperature, it is not just predicting same as yesterday.

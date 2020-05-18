@@ -1,0 +1,24 @@
+1) When a row is inserted with the same primary key as existng rows it overwrites the existing row.
+For eg.,
+ INSERT INTO test (id, data) VALUES (2, 'secondary');
+ INSERT INTO test (id, data) VALUES (2, 'double');
+Inserting these second row in the example with the same primary key(i.e.id=2) will overwrite the existing row and id=2 will have data 'double'.
+
+2) When I queried a keyspace with replication factor 1 and one node down, querying for id=3,4 shows error because the node which contains that data is not available. With replication factor 2 and a node down, all the rows were present because the data is present in atleast one node.
+
+3) When a node is down,if consistency one is given,the query will still return the value as it is checking for it's presence in one node only. If consistency all is given, the query will not return the value since it checks for it's presence in all the nodes. When all nodes are up, consistency level do not affect the querying.
+For replication factor 2 and CONSISTENCY ONE, there was no error after querying. But for replication factor 2 and CONSISTENCY ALL, there was error in querying(for id=3,4) when the node was down.
+
+4)If CONSISTENCY ALL was given when one of the nodes was down, rows where id=1,2,5 were returned but row of id=3,4 was not returned. This is because, the id=3,4 data was stored in the node which was down.
+
+5) CREATE TABLE nasalogs(
+  id uuid,
+  host text,
+  bytes int,
+  datetime timestamp,
+  path text,
+  PRIMARY KEY (host,id)
+);
+ I chose host and id as the primary keys because host is not unique and by creating an uuid, every record will have a unique primary key. Also, for assignment 8 we will be aggregating on host. So it is better to have rows with same host in one node. This will reduce the execution time. Hence, host is kept as the first component of primary key. 
+
+ 6) SELECT sum(bytes) FROM nasalogs;
